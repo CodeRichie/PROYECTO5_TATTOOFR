@@ -1,5 +1,4 @@
 import React from 'react'
-import videoBg from '../../images/videotattoo.mp4'
 import "./Home.css";
 import Header from "../../components/Header/Header";
 
@@ -10,10 +9,10 @@ export const Home = () => {
       <Header/>
       <div className='main'>
           <div className="overlay"></div>
-          <video src={videoBg} autoPlay loop muted />
+          <img src="../src/images/tintaWALL.jpg"></img>
           <div className="content">
           <img src="../src/images/tattoo-logo-purple.svg"></img>
-              <p>Madrid Art Tattoo</p>
+              <p>Barcelona Tattoo Studio</p> 
           </div>
       </div>
     </>
