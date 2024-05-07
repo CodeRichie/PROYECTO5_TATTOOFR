@@ -1,120 +1,126 @@
 import { useEffect, useState } from "react";
-import { CustomInput } from "../../components/CustomInput/CustomInput";
-import { bringProfile } from "../../services/apiCalls";
-import { IsInputError } from "../../utils/validators";
+import { updateProfile, bringProfile } from "../../services/apiCalls";
+import { Container, Form, Button } from "react-bootstrap";
 import BootstrapModal from "../../components/BootstrapModal/BootstrapModal";
 import { useDispatch, useSelector } from "react-redux";
-import { getLoggedAmount, getUserData } from "../../app/slices/userSlice";
+import {  getUserData, isAuthenticated, amIAdmin, editUserData } from "../../app/slices/userSlice";
 import "./Profile.css";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+
 import Header from "../../components/Header/Header";
+import sessionStorage from "redux-persist/es/storage/session";
 
 export const Profile = () => {
+  const userInfo = useSelector(getUserData)
+  const hasAcces =  useSelector(isAuthenticated)
+  const isAdmin = useSelector(amIAdmin)
+  const dispatch = useDispatch();
+
   const [profileData, setProfileData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
     phone: "",
-    password: "",
-    role: "",
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+console.log('profileData', profileData)
+  const validationSchema = Yup.object().shape({
+    firstName: Yup.string().required("Firstname es obligatorio"),
+    lastName: Yup.string(),
+    phone: Yup.number(),
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors},
+    reset
+  } = useForm({
+    defaultValues: {
+      firstName: profileData.firstName,
+      lastName: profileData.lastName ?? '',
+      phone: profileData.phone,
+    },
+    resolver: yupResolver(validationSchema)
+  });
 
-  const dispatch = useDispatch()
-
-  const veces = useSelector(getLoggedAmount)
-  const myPassport = useSelector(getUserData)
-  const token = myPassport.token;
-
-  const inputHandler = (e) => {
-    setProfileData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
+  const fetchProfile = async () => {
+    const myProfileData = await bringProfile(hasAcces);
+    setProfileData(myProfileData);
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const myProfileData = await bringProfile(token);
-      setProfileData(myProfileData);
-    };
     fetchProfile();
   }, []);
 
-  const updateProfileHandler = () => {
-    if (
-      !IsInputError(profileData.firstName, "name") ||
-      !IsInputError(profileData.email, "email")
-    ) {
-      console.log("nombre o email no válidos");
-      setErrorMessage("No se pueden actualizar los datos");
-      return;
+
+useEffect(() => {
+    if (profileData) {
+        reset(profileData);
     }
-    try {
-      updateProfile(profileData, token);
-    } catch (err) {
-      console.log(err);
-    }
+}, [profileData]); 
+
+  const onEditProfile = async(data) => {
+    const answer = await updateProfile(data, hasAcces);
+    if (answer.status === 200) {
+      dispatch(editUserData({ userInfo: answer.data}))
+      }
   };
 
-  const resetLoggedCount = () => {
-    console.log(veces)
-  }
 
   return (
   <><Header /><div className="profileElementsDesign">
       <>
         <h1 className="title">MIS DATOS PERSONALES</h1>
         <h2 className="description">Desde aquí podrás actualizar siempre tus datos.</h2>
-        <CustomInput
-          typeProp="text"
-          nameProp="firstName"
-          placeholderProp="first name"
-          value={profileData.firstName}
-          isDisabled={!isEditing}
-          handlerProp={inputHandler} />
-        <CustomInput
-          typeProp="text"
-          nameProp="lastName"
-          placeholderProp="last name"
-          value={profileData.lastName}
-          isDisabled={!isEditing}
-          handlerProp={inputHandler} />
-        <CustomInput
-          typeProp="email"
-          nameProp="email"
-          placeholderProp="email"
-          value={profileData.email}
-          isDisabled={!isEditing}
-          handlerProp={inputHandler} />
-        <CustomInput
-          typeProp="phone"
-          nameProp="phone"
-          placeholderProp="phone"
-          value={profileData.phone}
-          isDisabled={!isEditing}
-          handlerProp={inputHandler} />
-        <CustomInput
-          typeProp="password"
-          nameProp="password"
-          placeholderProp="*****"
-          value={profileData.password}
-          isDisabled={!isEditing}
-          handlerProp={inputHandler} />
-        <CustomInput
-          typeProp="text"
-          nameProp="role"
-          placeholderProp="role"
-          value={profileData.role.name}
-          isDisabled="disabled"
-          handlerProp={inputHandler} />
-        <>
-          <BootstrapModal
-            profileData={profileData}
-            inputHandler={inputHandler}
-            token={token} />
-        </>
+        <Form noValidate onSubmit={handleSubmit(onEditProfile)}>
+        <Form.Group className="mb-3" controlId="formGroupEmail">
+          <Form.Label>Nombre</Form.Label>
+          <Form.Control
+            type="firstName"
+            placeholder="Edite su nombre..."
+            {...register("firstName")}
+            isInvalid={!!errors.email}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.firstName?.message}
+          </Form.Control.Feedback>
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formGroupPassword">
+          <Form.Label>Apellido</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Edite su apellido..."
+            {...register("lastName")}
+            isInvalid={!!errors.lastName}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.lastName?.message}
+          </Form.Control.Feedback>
+        </Form.Group>
+
+
+        <Form.Group className="mb-3" controlId="formGroupPassword">
+          <Form.Label>Phone</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Edite su telefono..."
+            {...register("phone")}
+            isInvalid={!!errors.phone}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.phone?.message}
+          </Form.Control.Feedback>
+        </Form.Group>
+
+        <div className="d-grid my-5">
+          <Button variant="primary" size="lg" type="submit">
+            Editar profile
+          </Button>
+        </div>
+      </Form>
+
       </>
     </div></>
   );

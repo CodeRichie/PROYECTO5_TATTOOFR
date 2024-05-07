@@ -1,17 +1,18 @@
-import { useNavigate } from "react-router-dom";
-
-import { registerNewUserCall } from "../../services/apiCalls";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginCall } from "../../services/apiCalls";
 import "./Login.css";
 import Header from "../../components/Header/Header";
 import { Container, Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-
+import { setUserData, getUserData, isAuthenticated } from "../../app/slices/userSlice";
 
 export const Login = () => {
   const navigate = useNavigate();
-
+  const { state } = useLocation();
+  const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email("Formato de email inválido")
@@ -22,27 +23,31 @@ export const Login = () => {
   const {
     register,
     handleSubmit,
+    
     formState: { errors}
   } = useForm({
+    defaultValues: {
+      email: state?.email || "",
+    },
     resolver: yupResolver(validationSchema)
   });
 
-  const onSubmit = async(data) => {
-      const answer = await registerNewUserCall(data);
-      console.log(answer)
 
-      if (answer.data.email) {
-        setTimeout(() => {
-          navigate("/profile");
-        }, 2000);
+  const onSubmit = async(data) => {
+    const answer = await loginCall(data);
+    
+    if (answer.status === 200) {
+      dispatch(setUserData({token:answer.data.token, userInfo: answer.data.userInfo}))
+      navigate("/profile");
       }
   };
+
+
 
   return (
     <><Header />
     <div className="registerElementsDesign">
-          <h1 className="title">CREA UNA CUENTA</h1>
-          <h2 className="description">¿Eres nuevo? Regístrate y reserva tu primera cita.</h2>
+          <h1 className="title">ACCEDE A TU CUENTA</h1>
           <Container>
       <Form noValidate onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="formGroupEmail">
@@ -71,18 +76,6 @@ export const Login = () => {
           </Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formGroupPasswordConfirmation">
-          <Form.Label>Password Confirmation</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Confirme su password..."
-            {...register("passwordConfirmation")}
-            isInvalid={!!errors.passwordConfirmation}
-          />
-          <Form.Control.Feedback type="invalid">
-            {errors.passwordConfirmation?.message}
-          </Form.Control.Feedback>
-        </Form.Group>
 
         <div className="d-grid my-5">
           <Button variant="primary" size="lg" type="submit">

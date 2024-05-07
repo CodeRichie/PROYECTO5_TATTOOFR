@@ -7,6 +7,7 @@ import Header from "../../components/Header/Header";
 
 export const Characters = () => {
 	const [characters, setCharacters] = useState([]);
+	console.log('first', characters)
 	const bringCharacters = /*async*/ () => {
 		// const apiResponse = await bringAllCharacters()
 		// lógica que me convenga usar

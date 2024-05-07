@@ -28,10 +28,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        {/* <Route path="/characters" element={<Characters />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/admin" element={<AdminRoute Component={Admin} />} />
-        */}
+        <Route path="/characters" element={<Characters />} />
+        {/* <Route path="/admin" element={<AdminRoute Component={Admin} />} /> */}
+        
     </Routes>
   );
 }

@@ -9,9 +9,8 @@ export const Home = () => {
       <Header/>
       <div className='main'>
           <div className="overlay"></div>
-          <img src="../src/images/tintaWALL.jpg"></img>
+          <img src="../src/images/TATTOOFONDO.jpg"></img>
           <div className="content">
-          <img src="../src/images/tattoo-logo-purple.svg"></img>
               <p>Barcelona Tattoo Studio</p> 
           </div>
       </div>

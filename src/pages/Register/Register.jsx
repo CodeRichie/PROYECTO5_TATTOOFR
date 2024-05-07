@@ -19,7 +19,6 @@ export const Register = () => {
       .email("Formato de email inválido")
       .required("Email es obligatorio"),
     firstName: Yup.string().required('First name is required'),
-    role: Yup.string().required('Role is required'),
     password: Yup.string()
       .required("Password es obligatorio"),
     passwordConfirmation: Yup.string()
@@ -41,8 +40,9 @@ export const Register = () => {
     } catch ({response}) {
       setErrorOnsubmit({exist: true, message: data.message})
     }
-      if (answer.data.email) {
-        navigate("/profile");
+    console.log('answer', answer)
+      if (answer.status === 200) {
+        navigate("/login", {state: {email: data.email}});
       }
   };
 
@@ -77,23 +77,6 @@ export const Register = () => {
           />
           <Form.Control.Feedback type="invalid">
             {errors.firstName?.message}
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="formGroupEmail">
-          <Form.Label>Role</Form.Label>
-          <Form.Select  
-            {...register("role")}
-            name="role"
-            isInvalid={!!errors.role}  
-            aria-label="role-select" 
-            >
-           <option>Choose your role</option>
-            <option value="ADMIN">Admin</option>
-            <option value="ARTIST">Artist</option>
-            <option value="CLIENT">Client</option>
-          </Form.Select>
-          <Form.Control.Feedback type="invalid">
-            {errors.role?.message}
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="formGroupPassword">
