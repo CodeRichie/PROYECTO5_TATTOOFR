@@ -1,17 +1,19 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { bringAllCharacters, bringCharacterById, } from "../../services/apiCalls";
 import "./Characters.css";
 import Avatar from 'react-avatar';
 import Header from "../../components/Header/Header";
+import { Link, useNavigate } from "react-router-dom";
+import React from 'react';
+import {MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBBtn} from 'mdb-react-ui-kit';
+
 
 
 export const Characters = () => {
 	const [characters, setCharacters] = useState([]);
+	const navigate = useNavigate()
 	console.log('first', characters)
-	const bringCharacters = /*async*/ () => {
-		// const apiResponse = await bringAllCharacters()
-		// lógica que me convenga usar
-
+	const bringCharacters =  () => {
 		bringAllCharacters()
 			.then((res) => {
 				setCharacters(res);
@@ -26,22 +28,20 @@ export const Characters = () => {
 	return ( 
 	<><Header /><div className="charactersDesign">
 			<ol>
-				{characters.map((char) => {
+				{characters.map(({user, userID, id }) => {
 					return (
-						<>
-							<div className="cardCharacter">
-								<Avatar size={50} round="50px" name={char.user.firstName} />
+							<div key={`${userID} + ${id}`} onClick={()=> navigate(`/characters/${userID}`, {replace:true})} className="cardCharacter">
+								<Avatar size={50} round="50px" name={user.firstName} />
 								<div className="contactDesign">
 									<div className="contactName">
-										<p className="firstName">{char.user.firstName}</p>
+										<p className="firstName">{user.firstName}</p>
 									</div>
 									<div className="contactData">
-										<p className="phone">{char.user.phone}</p>
-										<p className="email">{char.user.email}</p>
+										<p className="phone">{user.phone}</p>
+										<p className="email">{user.email}</p>
 									</div>
 								</div>
 							</div>
-						</>
 					);
 				})}
 
@@ -49,3 +49,4 @@ export const Characters = () => {
 		</div></>
 );
 };
+

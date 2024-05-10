@@ -39,8 +39,36 @@ export const bringAllCharacters = async () => {
   return artists;
 };
 
+export const bringAllAppointmentsForClient = async (token) => {
+  console.log('token', token)
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const res = await axios.get(`${API_URL}appointments/client/appointments`, config);
+  console.log('res', res)
+  const [artists,count] = res.data
+  return artists;
+};
+
+export const bringAllAppointmentsForArtist = async (token) => {
+  console.log('token', token)
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const res = await axios.get(`${API_URL}appointments/artist/appointment`, config);
+  console.log('res', res)
+  const appointments = res.data
+  return appointments;
+};
+
+
 export const bringCharacterById = async (id) => {
-  // puedo preparar la información para enviar al servidor
   const res = await axios.get(`${API_URL}artists/${id}`);
 
   return res.data;
@@ -64,6 +92,16 @@ export const deleteUserById = async (id, token) => {
     }
   }
   return axios.delete(`${API_URL}users/delete/${id}`, config)
+}
+
+
+export const createAppointments = async (token, body) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+  return axios.post(`${API_URL}appointments/create`, body)
 }
 
 // .get("url", {headers})

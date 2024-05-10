@@ -1,7 +1,7 @@
 import {Container, Nav, Navbar, Button} from 'react-bootstrap';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {  logout, isAuthenticated, amIAdmin } from "../../app/slices/userSlice";
+import { logout, isAuthenticated, amIAdmin, amIArtist } from "../../app/slices/userSlice";
 
 import "./Header.css";
 
@@ -10,6 +10,7 @@ function Header() {
 
   const hasAcces =  useSelector(isAuthenticated)
   const isAdmin = useSelector(amIAdmin)
+  const isArtist = useSelector(amIArtist)
   const dispatch = useDispatch();
 
   const logoutAction =()=>{
@@ -35,6 +36,7 @@ function Header() {
               <>
                 <Nav.Link href="/profile">Profile</Nav.Link>
                 <Nav.Link href="/characters">Tatuadores</Nav.Link>
+                {isArtist && <Nav.Link href="/citas">Citas</Nav.Link> }
                 <Button variant="primary" size="lg" onClick={()=> logoutAction()}>Log out</Button>
                 </>
             )}
