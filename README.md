@@ -32,6 +32,7 @@ Historial de Citas y Creacion de Citas de los Artistas
 - Que la app sea responsive.
 
 ## Front-end
-[Click aqui](https://github.com/CodeRichie/PROYECTO5_TATTOOFR)
-##Back-end
-[Click aqui](https://github.com/CodeRichie/PROYECTO4_Tattoo)
+(https://github.com/CodeRichie/PROYECTO5_TATTOOFR)
+
+## Back-end
+(https://github.com/CodeRichie/PROYECTO4_Tattoo)
