@@ -6,7 +6,7 @@ import { updateProfile } from "../../services/apiCalls";
 import { useNavigate } from "react-router-dom";
 import "./BootstrapModal.css";
 
-function BootstrapModal({ profileData, inputHandler, token }) {
+function BootstrapModal({ profileData, formInputs, inputHandler, token }) {
   const [show, setShow] = useState(false);
 
   const navigate = useNavigate();
@@ -32,7 +32,14 @@ function BootstrapModal({ profileData, inputHandler, token }) {
     } catch (err) {
       console.log(err);
     }
-  };
+  }
+
+  // const formInputs = [
+  //   {type: 'date', name: 'date', placeholder: 'Select a date', value: date, isDisabled: false,onChange: dateHandler},
+  //   {type: 'text', name: 'description', placeholder: 'Description', value: description, isDisabled: false,onChange: descriptionHandler},
+  //   {type: 'number', name: 'price', placeholder: 'Price', value: price, isDisabled: false,onChange: priceHandler},
+  //   {type: 'text', name: 'client', placeholder: 'Client', value: client, isDisabled: false,onChange: clientHandler},
+  // ]
 
   return (
     <>
@@ -40,61 +47,39 @@ function BootstrapModal({ profileData, inputHandler, token }) {
         MODIFICAR
       </Button>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edita tus datos!</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <CustomInput
-            typeProp="text"
-            nameProp="firstName"
-            placeholderProp="first name"
-            value={profileData.firstName}
-            isDisabled=""
-            handlerProp={inputHandler}
-          />
-        <CustomInput
-            typeProp="text"
-            nameProp="lastName"
-            placeholderProp="last name"
-            value={profileData.lastName}
-            isDisabled=""
-            handlerProp={inputHandler}
-        />
-          <CustomInput
-            typeProp="email"
-            nameProp="email"
-            placeholderProp="email"
-            value={profileData.email}
-            isDisabled="disabled"
-            handlerProp={inputHandler}
-          />
-          <CustomInput
-            typeProp="phone"
-            nameProp="phone"
-            placeholderProp="phone"
-            value={profileData.phone}
-            isDisabled=""
-            handlerProp={inputHandler}
-          />
-          <CustomInput
-            typeProp="text"
-            nameProp="role"
-            placeholderProp="role"
-            value={profileData.role.name}
-            isDisabled="disabled"
-            handlerProp={inputHandler}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button className="regularButtonClass" variant="secondary" onClick={handleClose}>
-            CANCELAR
-          </Button>
-          <Button className="regularButtonClass" variant="primary" onClick={handleUpdate}>
-            GUARDAR
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {show && (
+
+        <>
+          <Modal>
+            <Modal.Header closeButton>
+              <Modal.Title>Edita tus datos!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+          {formInputs.map(input => {
+            return (
+              <CustomInput
+                typeProp={input.type}
+                nameProp={input.name}
+                placeholderProp={input.placeholder}
+                value={input.value}
+                isDisabled={input.isDisabled}
+                handlerProp={input.onChange}
+              />
+            )
+          })}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button className="regularButtonClass" variant="secondary" onClick={handleClose}>
+                CANCELAR
+              </Button>
+              <Button className="regularButtonClass" variant="primary" onClick={handleUpdate}>
+                GUARDAR
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+
+      )}
     </>
   );
 }

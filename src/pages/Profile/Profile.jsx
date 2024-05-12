@@ -18,6 +18,10 @@ export const Profile = () => {
   const isAdmin = useSelector(amIAdmin)
   const dispatch = useDispatch();
 
+
+  const token = userInfo.token;
+
+
   const [profileData, setProfileData] = useState({
     firstName: "",
     lastName: "",
@@ -67,9 +71,15 @@ useEffect(() => {
       }
   };
 
+  const onInputChange = (e) => {
+    console.log('e', e)
+  }
 
   return (
-  <><Header /><div className="profileElementsDesign">
+  <>
+  <Header />
+    <div className="profileElementsDesign">
+  {/* <BootstrapModal profileData={profileData} token={token} handlerProp={onInputChange} /> */}
       <>
         <h1 className="title">MIS DATOS PERSONALES</h1>
         <h2 className="description">Desde aquí podrás actualizar siempre tus datos.</h2>
