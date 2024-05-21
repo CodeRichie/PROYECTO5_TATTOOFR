@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { bringAllAppointmentsForArtist, getUserById } from "../../services/apiCalls";
+import { bringAllAppointmentsForArtist, getUserById , bringAllAppointmentsForClient, bringAllAppointmentsForAdmin} from "../../services/apiCalls";
 import Avatar from 'react-avatar';
 import Header from "../../components/Header/Header";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { isAuthenticated } from "../../app/slices/userSlice";
+import { isAuthenticated, amIClient,amIArtist, amIAdmin } from "../../app/slices/userSlice";
 import { CreateAppointments } from "./CreateAppointments/CreateAppointments";
 import { Button } from "react-bootstrap";
 import './Appointments.css'
@@ -14,16 +14,27 @@ export const Appointments = () => {
 	const [clients, setClients] = useState([]);
 	const [loaded, setLoaded] = useState(false);
 	const hasAcces = useSelector(isAuthenticated)
-	const navigate = useNavigate()
+	const isClient = useSelector(amIClient)
+	const isArtist = useSelector(amIArtist)
+	const isAdmin = useSelector(amIAdmin)
+	
 	const bringAllAppointments = async () => {
-		const appointments = await bringAllAppointmentsForArtist(hasAcces)
+		let appointments
+		if (isArtist) {
+		appointments =	await bringAllAppointmentsForArtist(hasAcces)
+		}
+		if (isClient) {
+			appointments =	await bringAllAppointmentsForClient(hasAcces)
+		}
+		if (isAdmin) {
+			appointments =	await bringAllAppointmentsForAdmin(hasAcces)
+		}
+
 		setAppointments(appointments);
 	};
 
 	const getUserData = async (id) => {
 		const user = await getUserById(id, hasAcces)
-		// console.log(user.data)
-
 		return user.data
 	}
 
@@ -32,7 +43,7 @@ export const Appointments = () => {
 	}, []);
 
 	useEffect(() => {
-		if (appointments) {
+		if (appointments && !isAdmin) {
 			appointments.forEach((appointment) => {
 				 getUserData(appointment.client.id)
 					.then((client) => {
@@ -44,9 +55,7 @@ export const Appointments = () => {
 	}, [appointments])
 
 	useEffect(() => {
-		console.log('clients changed')
-		console.log(clients)
-	  if (clients.length > 0) {
+	  if (clients.length > 0 || isAdmin) {
 		setLoaded(true)
 	  }
 	}, [clients])
@@ -65,14 +74,15 @@ const findClient = (clientID) => {
 					{loaded && appointments.map((appointment, index) => {
 						return (
 							<div key={index} className="appointment">
-								<div style={{textAlign: 'left', display: 'flex', flexSirection: 'flexStart'}}>
+								{!isAdmin && (<div style={{textAlign: 'left', display: 'flex', flexSirection: 'flexStart'}}>
 									{
 										`userid: ${appointment.client.id}`
 										// findClient(appointment.client.id)
 										// (`${appointment.client.data?.firstName} ${appointment.client.data?.lastName}`)
 										// getUserData(appointment.client.id)
 									}
-								</div>
+								</div>)}
+								
 								<div style={{display: 'flex', flexSirection: 'flexStart'}}>
 									date: {new Date(appointment.day_date).toLocaleDateString()}
 
@@ -87,13 +97,11 @@ const findClient = (clientID) => {
 						)
 					})}
 				</div>
-				<div className="create-appointment-container">
-					<CreateAppointments />
-				</div>
+				{!isClient &&
+				(<div className="create-appointment-container">
+				<CreateAppointments />
+			</div>)}
 			</div>
-			{/* <Button variant="primary" size="lg" onClick={() => navigate(`/create-citas`, { replace: true })}>
-				Crear cita
-			</Button> */}
 		</>
 	);
 };

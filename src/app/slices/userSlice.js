@@ -31,7 +31,6 @@ export const userSlice = createSlice({
         },
         editUserData: (state, action) => {
             const { userInfo} = action.payload
-            console.log('userInfo', userInfo)
                 return {
                     ...state,
                     userInfo: {
@@ -66,5 +65,7 @@ export const isAuthenticated = (state) => state.user.token
 export const amIAdmin =(state) => state.user.userInfo.role === "admin"
 
 export const amIArtist =(state) => state.user.userInfo.role === "artist"
+
+export const amIClient = (state) => state.user.userInfo.role === "client"
 
 export default userSlice.reducer

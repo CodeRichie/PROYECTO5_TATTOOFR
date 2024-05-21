@@ -13,14 +13,14 @@ import { ArtistRoute } from "./components/ArtistRoute/ArtistRoute";
 import {DetailCharacter} from "./pages/DetailCharacter/DetailCharacter";
 import { Appointments } from "./pages/Appointments/Appointments";
 import {  useSelector } from "react-redux";
-import { amIArtist } from "./app/slices/userSlice";
+import {  amIAdmin } from "./app/slices/userSlice";
 import { CreateAppointments } from "./pages/Appointments/CreateAppointments/CreateAppointments";
+import { AllUsers } from "./pages/AllUsers/AllUsers";
 
 function App() {
   const [isServerUp, setIsServerUp] = useState(false);
-  const isArtist = useSelector(amIArtist)
+  const isAdmin = useSelector(amIAdmin)
 
-console.log('isServerUp', isServerUp)
   useEffect(() => {
     const pingServer = async () => {
       const isAlive = await axios.get("http://localhost:3000/api/");
@@ -36,12 +36,10 @@ console.log('isServerUp', isServerUp)
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
-        {isArtist && (<>
-          <Route path="/citas" element={<Appointments />} />
-          <Route path="/create-citas" element={<CreateAppointments />} />
-        </>
-        )}
+        <Route path="/citas" element={<Appointments />} />
+        
        <Route path="/characters" element={<Characters />} />
+       {isAdmin && (<Route path="/all-users" element={<AllUsers />} />)}
       {/*  <Route path="/characters/:id" element={<DetailCharacter />} /> */}
         {/* <Route path="/admin" element={<AdminRoute Component={Admin} />} /> */}
         

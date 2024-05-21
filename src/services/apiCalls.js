@@ -33,6 +33,18 @@ export const updateProfile = async (data, token) => {
   return res
 }
 
+export const getAllUsers = async (token) => {
+  console.log('token', token)
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+  const res = await axios.get(`${API_URL}users/`, config)
+  const users = res.data
+  return users
+}
+
 export const bringAllCharacters = async () => {
   const res = await axios.get(`${API_URL}/artists` /*headers*/);
   const [artists,count] = res.data
@@ -49,12 +61,11 @@ export const bringAllAppointmentsForClient = async (token) => {
 
   const res = await axios.get(`${API_URL}appointments/client/appointments`, config);
   console.log('res', res)
-  const [artists,count] = res.data
-  return artists;
+  const appointments = res.data
+  return appointments;
 };
 
 export const bringAllAppointmentsForArtist = async (token) => {
-  // console.log('token', token)
   const config = {
     headers: {
       Authorization: `Bearer ${token}`
@@ -66,6 +77,19 @@ export const bringAllAppointmentsForArtist = async (token) => {
   const appointments = res.data
   return appointments;
 };
+
+export const bringAllAppointmentsForAdmin = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const res = await axios.get(`${API_URL}appointments`, config);
+  const appointments = res.data
+  return appointments;
+};
+
 
 
 export const bringCharacterById = async (id) => {

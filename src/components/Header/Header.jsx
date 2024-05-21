@@ -35,8 +35,9 @@ function Header() {
             {hasAcces && (
               <>
                 <Nav.Link href="/profile">Profile</Nav.Link>
+              {isAdmin && (<Nav.Link href="/all-users">Users</Nav.Link>)}
                 <Nav.Link href="/characters">Tatuadores</Nav.Link>
-                {isArtist && <Nav.Link href="/citas">Citas</Nav.Link> }
+                <Nav.Link href="/citas">Citas</Nav.Link> 
                 <Button variant="primary" size="lg" onClick={()=> logoutAction()}>Log out</Button>
                 </>
             )}

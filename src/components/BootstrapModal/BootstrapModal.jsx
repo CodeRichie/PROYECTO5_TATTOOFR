@@ -19,13 +19,11 @@ function BootstrapModal({ profileData, formInputs, inputHandler, token }) {
     //   navigate("/profile");
     //});
 
-    console.log("close");
     setShow(false);
   };
   const handleUpdate = async () => {
     try {
       await updateProfile(profileData, token);
-      console.log("usuario actualizado");
       setTimeout(() => {
         setShow(false);
       }, 3000);
