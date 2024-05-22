@@ -44,7 +44,7 @@ export const CreateAppointments = () => {
   };
 
   const getUsers = async () => {
-    const _users = await bringAllUsersCall()
+    const _users = await bringAllUsersCall(token)
     setUsers(_users.data)
   }
   useEffect(() => {
